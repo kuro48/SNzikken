@@ -16,18 +16,34 @@ int main(int argc, char *argv[])
   int sock;
   int fd;
   char buf[65536];
-  int n, ret,e,err;
-  if (argc != 2)
+  int n, ret, e, err;
+  char *hostname = "localhost";
+  struct addrinfo hints, *res;
+  struct in_addr addr;
+
+  if (argc != 3)
   {
-    fprintf(stderr, "Usage : %s filename¥n", argv[0]);
+    fprintf(stderr, "Usage : %s filename\n", argv[2]);
     return 1;
   }
-  fd = open(argv[1], O_RDONLY);
+
+  if ((err = getaddrinfo(argv[1], NULL, &hints, &res)) != 0)
+  {
+    printf("error %d\n", err);
+    return 1;
+  }
+
+  fd = open(argv[2], O_RDONLY);
+
   if (fd < 0)
   {
     perror("open");
     return 1;
   }
+
+  addr.s_addr = ((struct sockaddr_in *)(res->ai_addr))->sin_addr.s_addr;
+  inet_ntop(AF_INET, &addr, buf, sizeof(buf));
+  printf("ip address : %s\n", buf);
 
   /* ソケットの作成 */
   sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -55,6 +71,7 @@ int main(int argc, char *argv[])
     printf("%d\n", errno);
     return 1;
   }
+
   /* socket の終了 */
   close(sock);
   return 0;
