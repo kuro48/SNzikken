@@ -55,6 +55,12 @@ int main(int argc, char *argv[])
 
   /* サーバに接続 */
   e = connect(sock, (struct sockaddr *)&server, sizeof(server));
+  if (e < 0)
+  {
+    perror("connect");
+    printf("%d\n", errno);
+    return 1;
+  }
   while ((n = read(fd, buf, sizeof(buf))) > 0)
   {
     ret = write(sock, buf, n);
@@ -63,13 +69,6 @@ int main(int argc, char *argv[])
       perror("write");
       break;
     }
-  }
-
-  if (e < 0)
-  {
-    perror("connect");
-    printf("%d\n", errno);
-    return 1;
   }
 
   /* socket の終了 */

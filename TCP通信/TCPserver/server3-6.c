@@ -59,24 +59,27 @@ int main()
     printf("%d\n", errno);
     return 1;
   }
-
   //データの送受信
-  while ((n = read(sock, get, sizeof(get))) > 0)
+  n = read(sock, get, sizeof(get));
+  printf("%s",get);
+  fd = open(get, O_RDONLY);
+  if (fd < 0)
   {
-    fd = open(get, O_RDONLY);
-    if (fd < 0)
-    {
-      perror("open");
-      break;
-    }
-    printf("aaa");
+    perror("open");
+    write(sock, "CANNOT FIND THE FILE", 1024);
+    return 1;
+  }
+  printf("aaa");
+  while ((n = read(sock, buf, sizeof(buf))) > 0)
+  {
     ret = write(fd, buf, n);
-    if (ret < 1)
+    if (ret < 0)
     {
       perror("write");
       break;
     }
   }
+
   /* TCP セッションの終了 */
   close(sock);
   /* listen する socket の終了 */
