@@ -65,8 +65,11 @@ int main(int argc, char *argv[])
   /* TCP クライアントからの接続要求を受け付ける */
   len = sizeof(client);
   sock = accept(sock0, (struct sockaddr *)&client, &len);
+
   while ((n = read(sock, buf, sizeof(buf))) > 0)
   {
+    printf("%s",buf);
+    printf("%d", n);
     ret = write(fd, buf, n);
     if (ret < 1)
     {

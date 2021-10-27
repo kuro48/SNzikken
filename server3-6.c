@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-int main(int argc, char *argv[])
+int main()
 {
   int sock0;
   struct sockaddr_in addr;
@@ -15,21 +15,10 @@ int main(int argc, char *argv[])
   socklen_t len;
   int sock;
   int fd;
-  int n, ret,e,b;
+  int n, ret, e, b;
   char buf[65536];
+  char get[65536];
 
-  if (argc != 2)
-  {
-    fprintf(stderr, "Usage : %s outputfilename\n", argv[0]);
-    return 1;
-  }
-
-  fd = open(argv[1], O_WRONLY | O_CREAT, 0600);
-  if (fd < 0)
-  {
-    perror("open");
-    return 1;
-  }
   /* ソケットの作成 */
   sock0 = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -45,7 +34,6 @@ int main(int argc, char *argv[])
   addr.sin_port = htons(12345);
   addr.sin_addr.s_addr = INADDR_ANY;
   b = bind(sock0, (struct sockaddr *)&addr, sizeof(addr));
-
   if (b < 0)
   {
     perror("bind");
@@ -65,20 +53,29 @@ int main(int argc, char *argv[])
   /* TCP クライアントからの接続要求を受け付ける */
   len = sizeof(client);
   sock = accept(sock0, (struct sockaddr *)&client, &len);
-  while ((n = read(sock, buf, sizeof(buf))) > 0)
+  if (sock < 0)
   {
+    perror("accept");
+    printf("%d\n", errno);
+    return 1;
+  }
+
+  //データの送受信
+  while ((n = read(sock, get, sizeof(get))) > 0)
+  {
+    fd = open(get, O_RDONLY);
+    if (fd < 0)
+    {
+      perror("open");
+      break;
+    }
+    printf("aaa");
     ret = write(fd, buf, n);
     if (ret < 1)
     {
       perror("write");
       break;
     }
-  }
-  if (sock < 0)
-  {
-    perror("accept");
-    printf("%d\n", errno);
-    return 1;
   }
   /* TCP セッションの終了 */
   close(sock);

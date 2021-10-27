@@ -33,14 +33,6 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  fd = open(argv[2], O_RDONLY);
-
-  if (fd < 0)
-  {
-    perror("open");
-    return 1;
-  }
-
   addr.s_addr = ((struct sockaddr_in *)(res->ai_addr))->sin_addr.s_addr;
   inet_ntop(AF_INET, &addr, buf, sizeof(buf));
   printf("ip address : %s\n", buf);
@@ -55,14 +47,22 @@ int main(int argc, char *argv[])
 
   /* サーバに接続 */
   e = connect(sock, (struct sockaddr *)&server, sizeof(server));
+  //データの送受信
   while ((n = read(fd, buf, sizeof(buf))) > 0)
   {
-    ret = write(sock, buf, n);
+    ret = write(sock, argv[2], n);
     if (ret < 1)
     {
       perror("write");
       break;
     }
+  }
+  fd = open(buf, O_WRONLY | O_CREAT, 0600);
+  printf("aaa");
+  if (fd < 0)
+  {
+    perror("open");
+    return 1;
   }
 
   if (e < 0)
