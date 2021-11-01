@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-int main(int argc, char *argv[])
+int main()
 {
   int sock0;
   struct sockaddr_in addr;
@@ -18,13 +18,13 @@ int main(int argc, char *argv[])
   int n, ret,e,b;
   char buf[65536];
 
-  if (argc != 2)
-  {
-    fprintf(stderr, "Usage : %s outputfilename\n", argv[0]);
-    return 1;
-  }
+  // if (argc != 2)
+  // {
+  //   fprintf(stderr, "Usage : %s outputfilename\n", argv[0]);
+  //   return 1;
+  // }
 
-  fd = open(argv[1], O_WRONLY | O_CREAT, 0600);
+  fd = open(argv[1], O_RDONLY);
   if (fd < 0)
   {
     perror("open");
@@ -68,6 +68,8 @@ int main(int argc, char *argv[])
 
   while ((n = read(sock, buf, sizeof(buf))) > 0)
   {
+    printf("%s",buf);
+    printf("%d", n);
     ret = write(fd, buf, n);
     if (ret < 1)
     {

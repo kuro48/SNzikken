@@ -21,24 +21,25 @@ int main(int argc, char *argv[])
   struct addrinfo hints, *res;
   struct in_addr addr;
 
-  argv[2] = strtok(argv[2], "\n");
-  
   if (argc != 3)
   {
     fprintf(stderr, "Usage : %s filename\n", argv[2]);
     return 1;
   }
 
-  memset(&hints, 0, sizeof(hints));
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_family = AF_INET;
-
-  //名前解決の取得エラー
   if ((err = getaddrinfo(argv[1], NULL, &hints, &res)) != 0)
   {
     printf("error %d\n", err);
     return 1;
   }
+
+  // fd = open(argv[2], O_RDONLY);
+
+  // if (fd < 0)
+  // {
+  //   perror("open");
+  //   return 1;
+  // }
 
   addr.s_addr = ((struct sockaddr_in *)(res->ai_addr))->sin_addr.s_addr;
   inet_ntop(AF_INET, &addr, buf, sizeof(buf));
@@ -60,27 +61,11 @@ int main(int argc, char *argv[])
     printf("%d\n", errno);
     return 1;
   }
-
-  //データの送受信
-  //n = read(fd, buf, sizeof(buf));
-
-  ret = write(sock, argv[2], n);
-  if (ret < 0)
-  {
-    perror("write");
-    return 1;
-  }
-
-  fd = open(argv[2], O_WRONLY | O_CREAT, 0600);
-  if (fd < 0)
-  {
-    perror("open");
-    return 1;
-  }
-  while ((n = read(sock, buf, sizeof(buf))) > 0)
+  
+  while ((n = read(fd, buf, sizeof(buf))) > 0)
   {
     ret = write(sock, buf, n);
-    if (ret < 0)
+    if (ret < 1)
     {
       perror("write");
       break;

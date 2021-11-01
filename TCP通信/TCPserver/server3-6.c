@@ -69,10 +69,10 @@ int main()
     write(sock, "CANNOT FIND THE FILE", 1024);
     return 1;
   }
-  printf("aaa");
-  while ((n = read(sock, buf, sizeof(buf))) > 0)
+
+  while ((n = read(fd, buf, sizeof(buf))) > 0)
   {
-    ret = write(fd, buf, n);
+    ret = write(sock, buf, n);
     if (ret < 0)
     {
       perror("write");
