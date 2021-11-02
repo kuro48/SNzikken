@@ -65,6 +65,12 @@ int main(int argc, char *argv[])
   /* TCP クライアントからの接続要求を受け付ける */
   len = sizeof(client);
   sock = accept(sock0, (struct sockaddr *)&client, &len);
+  if (sock < 0)
+  {
+    perror("accept");
+    printf("%d\n", errno);
+    return 1;
+  }
 
   while ((n = read(sock, buf, sizeof(buf))) > 0)
   {
@@ -74,12 +80,6 @@ int main(int argc, char *argv[])
       perror("write");
       break;
     }
-  }
-  if (sock < 0)
-  {
-    perror("accept");
-    printf("%d\n", errno);
-    return 1;
   }
   /* TCP セッションの終了 */
   close(sock);

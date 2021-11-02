@@ -43,7 +43,6 @@ int main()
 
   /* TCP クライアントからの接続要求を待てる状態にする */
   e = listen(sock0, 5);
-
   if (e < 0)
   {
     perror("listen");
@@ -59,9 +58,14 @@ int main()
     printf("%d\n", errno);
     return 1;
   }
+  else
+  {
+    printf("connected");
+  }
+
   //データの送受信
   n = read(sock, get, sizeof(get));
-  printf("%s",get);
+  printf("%s", get);
   fd = open(get, O_RDONLY);
   if (fd < 0)
   {

@@ -21,8 +21,6 @@ int main(int argc, char *argv[])
   struct addrinfo hints, *res;
   struct in_addr addr;
 
-  argv[2] = strtok(argv[2], "\n");
-  
   if (argc != 3)
   {
     fprintf(stderr, "Usage : %s filename\n", argv[2]);
@@ -46,6 +44,12 @@ int main(int argc, char *argv[])
 
   /* ソケットの作成 */
   sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock < 0)
+  {
+    perror("accept");
+    printf("%d\n", errno);
+    return 1;
+  }
   /* 接続先指定用構造体の準備 */
   server.sin_family = AF_INET;
   server.sin_port = htons(12345);
@@ -65,6 +69,8 @@ int main(int argc, char *argv[])
   //n = read(fd, buf, sizeof(buf));
 
   ret = write(sock, argv[2], n);
+  printf("%s", argv[2]);
+  // ret = send(sock, argv[2], strlen(argv[2]), n);
   if (ret < 0)
   {
     perror("write");
@@ -79,7 +85,7 @@ int main(int argc, char *argv[])
   }
   while ((n = read(sock, buf, sizeof(buf))) > 0)
   {
-    ret = write(sock, buf, n);
+    ret = write(fd, buf, n);
     if (ret < 0)
     {
       perror("write");
