@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   sock = socket(AF_INET, SOCK_DGRAM, 0);
   int port_num = atoi(argv[2]);
   addr1.sin_family = AF_INET;
-  addr1.sin_port = htons(12345);
+  addr1.sin_port = htons(port_num);
   inet_pton(AF_INET, buf, &addr1.sin_addr.s_addr);
   n = sendto(sock, "HELLO", 5, 0, (struct sockaddr *)&addr1, sizeof(addr1));
   if (n < 1)

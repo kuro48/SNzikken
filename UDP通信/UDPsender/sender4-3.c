@@ -53,19 +53,19 @@ int main(int argc, char *argv[])
   inet_pton(AF_INET, buf, &addr.sin_addr.s_addr);
 
   n = sendto(sock, "HELLO", 5, 0, (struct sockaddr *)&addr, sizeof(addr));
-  if (n < 1)
+  if (n < 0)
   {
     perror("sendto");
     return 1;
   }
 
-  // sock2 = socket(AF_INET, SOCK_DGRAM, 0);
+  sock2 = socket(AF_INET, SOCK_DGRAM, 0);
   addr3.sin_family = AF_INET;
   addr3.sin_port = htons(12346);
   addr3.sin_addr.s_addr = INADDR_ANY;
 
-  b = bind(sock, (struct sockaddr *)&addr3, sizeof(addr3));
-  if (b < 1)
+  b = bind(sock2, (struct sockaddr *)&addr3, sizeof(addr3));
+  if (b < 0)
   {
     perror("bind");
     return 1;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
   addrlen = sizeof(senderinfo);
 
   r = recvfrom(sock2, buf2, sizeof(buf2) - 1, 0, (struct sockaddr *)&senderinfo, &addrlen);
-  if (r < 1)
+  if (r < 0)
   {
     perror("recvfrom");
     return 1;

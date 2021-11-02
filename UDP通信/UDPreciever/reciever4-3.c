@@ -10,7 +10,8 @@
 int main()
 {
   int sock, sock2;
-  struct sockaddr_in addr, addr2;
+  struct sockaddr_in addr;
+  struct sockaddr_in addr2;
   struct sockaddr_in senderinfo;
   socklen_t addrlen;
   char buf[2048];
@@ -27,7 +28,7 @@ int main()
   addrlen = sizeof(senderinfo);
 
   n = recvfrom(sock, buf, sizeof(buf) - 1, 0, (struct sockaddr *)&senderinfo, &addrlen);
-  if (n < 1)
+  if (n < 0)
   {
     perror("recvfrom");
     return 1;
@@ -43,7 +44,7 @@ int main()
   inet_pton(AF_INET, portnum, &addr2.sin_addr.s_addr);
 
   s = sendto(sock, buf2, strlen(buf2), 0, (struct sockaddr *)&addr2, sizeof(addr2));
-  if (s < 1)
+  if (s < 0)
   {
     perror("sendto");
     return 1;
