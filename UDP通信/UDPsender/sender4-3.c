@@ -12,14 +12,15 @@
 
 int main(int argc, char *argv[])
 {
-  int sock;
-  struct sockaddr_in addr1;
+  int sock, sock2;
+  struct sockaddr_in addr;
+  struct sockaddr_in addr3;
   struct sockaddr_in senderinfo;
   struct addrinfo hints, *res;
   struct in_addr addr2;
   socklen_t addrlen;
-  char buf[2048];
-  int n, err;
+  char buf[2048], buf2[2048];
+  int n, r, err, b;
 
   if (argc != 3)
   {
@@ -45,16 +46,43 @@ int main(int argc, char *argv[])
   /* 実行例： ./simpleUDPsender 127.0.0.1 */
 
   sock = socket(AF_INET, SOCK_DGRAM, 0);
+
   int port_num = atoi(argv[2]);
-  addr1.sin_family = AF_INET;
-  addr1.sin_port = htons(12345);
-  inet_pton(AF_INET, buf, &addr1.sin_addr.s_addr);
-  n = sendto(sock, "HELLO", 5, 0, (struct sockaddr *)&addr1, sizeof(addr1));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port_num);
+  inet_pton(AF_INET, buf, &addr.sin_addr.s_addr);
+
+  n = sendto(sock, "HELLO", 5, 0, (struct sockaddr *)&addr, sizeof(addr));
   if (n < 1)
   {
     perror("sendto");
     return 1;
   }
+
+  // sock2 = socket(AF_INET, SOCK_DGRAM, 0);
+  addr3.sin_family = AF_INET;
+  addr3.sin_port = htons(12346);
+  addr3.sin_addr.s_addr = INADDR_ANY;
+
+  b = bind(sock, (struct sockaddr *)&addr3, sizeof(addr3));
+  if (b < 1)
+  {
+    perror("bind");
+    return 1;
+  }
+
+  addrlen = sizeof(senderinfo);
+
+  r = recvfrom(sock2, buf2, sizeof(buf2) - 1, 0, (struct sockaddr *)&senderinfo, &addrlen);
+  if (r < 1)
+  {
+    perror("recvfrom");
+    return 1;
+  }
+
+  write(fileno(stdout), buf2, r);
+
   close(sock);
+  close(sock2);
   return 0;
 }
