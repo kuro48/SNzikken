@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   while ((n = read(fd, buf, sizeof(buf))) > 0)
   {
     ret = write(sock, buf, n);
-    if (ret < 1)
+    if (ret < 0)
     {
       perror("write");
       break;

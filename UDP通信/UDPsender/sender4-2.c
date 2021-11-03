@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   addr1.sin_port = htons(port_num);
   inet_pton(AF_INET, buf, &addr1.sin_addr.s_addr);
   n = sendto(sock, "HELLO", 5, 0, (struct sockaddr *)&addr1, sizeof(addr1));
-  if (n < 1)
+  if (n < 0)
   {
     perror("sendto");
     return 1;
