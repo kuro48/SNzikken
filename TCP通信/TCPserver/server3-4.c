@@ -39,7 +39,12 @@ int main(int argc, char *argv[])
   listen(sock0, 5);
   /* TCP クライアントからの接続要求を受け付ける */
   len = sizeof(client);
-  sock = accept(sock0, (struct sockaddr *)&client, &len);
+  sock = accept(-1, (struct sockaddr *)&client, &len);
+  if (sock < 0)
+  {
+    perror("write");
+    break;
+  }
   while ((n = read(sock, buf, sizeof(buf))) > 0)
   {
     ret = write(fd, buf, n);
