@@ -6,17 +6,38 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include <errno.h>
+#include <ctype.h>
 /* 新規 TCP コネクション（クライアント）データを格納する構造体 */
 struct clientdata
 {
   int sock;
   struct sockaddr_in saddr;
 };
+
+void convert(char *out, char *in)
+{
+  int i;
+  i = 0;
+
+  while (in[i] != '\0')
+  {
+    if ('a' <= in[i] && in[i] <= 'z')
+    {
+      out[i] = toupper(in[i]);
+    }
+    else if ('A' <= in[i] && in[i] <= 'Z')
+    {
+      out[i] = tolower(in[i]);
+    }
+    i++;
+  }
+}
+
 void *threadfunc(void *data)
 {
   int sock;
   struct clientdata *cdata = data;
-  char buf[1024];
+  char buf[1024], buf2[1024];
   int n;
   if (data == NULL)
   {
@@ -31,13 +52,17 @@ void *threadfunc(void *data)
     perror("read");
     goto err;
   }
-  printf("%s",buf);
-  n = write(sock, buf, n);
+
+  printf("%s", buf);
+  convert(buf2, buf);
+
+  n = write(sock, buf2, n);
   if (n < 0)
   {
     perror("write");
     goto err;
   }
+
   /* 新規 TCP セッションの終了 */
   if (close(sock) != 0)
   {
@@ -51,6 +76,9 @@ err:
   free(data);
   return (void *)-1;
 }
+
+
+
 int main()
 {
   int sock0;

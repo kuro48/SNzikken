@@ -4,5 +4,6 @@
     "in.h": "c",
     "inet.h": "c",
     "netdb.h": "c"
-  }
+  },
+  "C_Cpp.errorSquiggles": "Disabled"
 }
